@@ -8,7 +8,7 @@ pipeline {
             }
             post {
                 success {
-                    junit 'target/surefire-reports/**/*.xml' 
+                    junit allowEmptyResults: true, testDataPublishers: [[$class: 'AutomateTestDataPublisher']], testResults: 'target/surefire-reports/**/*.xml' 
                 }
             }
         }
