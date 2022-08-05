@@ -1,13 +1,28 @@
 pipeline {
-   agent any
-   stages {
-      stage('setup') {
-         steps {
-            browserstack(credentialsId: 'dw471drf-db68-4r23b-969d-24r3r32f') {
-               echo "hello"
-			   mvn test
-            }
-         }
-      }
+    agent any
+    tools {
+        maven 'Maven 3.3.9'
+        jdk 'jdk8'
     }
-  }
+    stages {
+        stage ('Initialize') {
+            steps {
+                sh '''
+                    echo "PATH = ${PATH}"
+                    echo "M2_HOME = ${M2_HOME}"
+                '''
+            }
+        }
+
+        stage ('Build') {
+            steps {
+                sh 'mvn -Dmaven.test.failure.ignore=true install' 
+            }
+            post {
+                success {
+                    junit 'target/surefire-reports/**/*.xml' 
+                }
+            }
+        }
+    }
+}
